@@ -12,16 +12,21 @@ class MsgSeed {
     }
 
     getSeed(id) {
-        if (!this.seeds[id]) return null
+        if (!this.seeds[id]) {
+            console.log('no seed for id ' + id)
+            return null
+        }
 
         while (this.seeds[id].length > 0) {
             let seed = this.seeds[id].pop()
             if (this.isExpired(seed)) {
+                console.log('expired seed for id ' + id)
                 continue
             }
             return seed.seed
         }
 
+        console.log('not found seed for id ' + id)
         return null
     }
 
