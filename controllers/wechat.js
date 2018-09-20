@@ -1,4 +1,5 @@
 const axios = require('axios');
+const postJson = require('../utils/post-json')
 const config = require('../config');
 const accessTocken = require('../utils/access-tocken');
 const logger = require('../utils/logger').logger('wechat');
@@ -30,9 +31,8 @@ async function sendTemplateMsg(ctx) {
     const url = 'https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token=' + tocken;
 
     try {
-        const result = await axios.post(url,
-            {
-                params: {
+        const result = await postJson(url,
+                {
                     template_id: 'jGlP_HnrwRBot5E0_vJu3Y0J8KFgRFep8AEuQBwxUTg',
                     page: "index",
                     form_id: ctx.request.body.formId,
@@ -56,7 +56,6 @@ async function sendTemplateMsg(ctx) {
                     emphasis_keyword: "keyword1.DATA",
                     touser: 'o2Yr80OCnF1rMkmf6ss10aj3CzAw'
                 }
-            }
         );
     
         ctx.response.type = "application/json";
