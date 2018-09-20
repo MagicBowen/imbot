@@ -76,6 +76,7 @@ async function handleCustomerMsg(ctx) {
         MsgId: ctx.request.body.MsgId
     }                
     console.log('reply customer msg : ' + JSON.stringify(msg))
+    ctx.response.type = "application/json"
     ctx.response.status = 200
     ctx.response.body = msg
 }
