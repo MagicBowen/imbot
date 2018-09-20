@@ -67,13 +67,21 @@ async function handleCustomerMsg(ctx) {
     //         content : ctx.request.body.text + '_test'
     //     }
     // }    
+    // let msg = {
+    //     ToUserName: ctx.request.body.FromUserName,
+    //     FromUserName: ctx.request.body.ToUserName,
+    //     CreateTime: timestamp.now(),
+    //     MsgType: "text",
+    //     Content: ctx.request.body.Content,
+    //     MsgId: ctx.request.body.MsgId
+    // }                
     let msg = {
         ToUserName: ctx.request.body.FromUserName,
         FromUserName: ctx.request.body.ToUserName,
         CreateTime: timestamp.now(),
-        MsgType: "text",
-        Content: ctx.request.body.Content,
-        MsgId: ctx.request.body.MsgId
+        MsgType: "transfer_customer_service",
+        // Content: ctx.request.body.Content,
+        // MsgId: ctx.request.body.MsgId
     }                
     console.log('reply customer msg : ' + JSON.stringify(msg))
     ctx.response.type = "application/json"
