@@ -58,31 +58,20 @@ async function getSignature(ctx) {
     }
 }
 
-async function handleCustomerMsg(ctx) {
-    // let msg = {
-    //     touser : ctx.request.body.FromUserName,
-    //     msgtype : "text",
-    //     text :
-    //     {
-    //         content : ctx.request.body.text + '_test'
-    //     }
-    // }    
-    // let msg = {
-    //     ToUserName: ctx.request.body.FromUserName,
-    //     FromUserName: ctx.request.body.ToUserName,
-    //     CreateTime: timestamp.now(),
-    //     MsgType: "text",
-    //     Content: ctx.request.body.Content,
-    //     MsgId: ctx.request.body.MsgId
-    // }                
+async function handleCustomerMsg(ctx) {  
     let msg = {
         ToUserName: ctx.request.body.FromUserName,
         FromUserName: ctx.request.body.ToUserName,
         CreateTime: timestamp.now(),
-        MsgType: "transfer_customer_service",
-        // Content: ctx.request.body.Content,
-        // MsgId: ctx.request.body.MsgId
+        MsgType: 'text',
+        Content: 'hello'
     }                
+    // let msg = {
+    //     ToUserName: ctx.request.body.FromUserName,
+    //     FromUserName: ctx.request.body.ToUserName,
+    //     CreateTime: timestamp.now(),
+    //     MsgType: "transfer_customer_service",
+    // }                
     console.log('reply customer msg : ' + JSON.stringify(msg))
     ctx.response.type = "application/json"
     ctx.response.status = 200
