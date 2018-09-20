@@ -71,7 +71,13 @@ async function handleCustomerMsg(ctx) {
     //     FromUserName: ctx.request.body.ToUserName,
     //     CreateTime: timestamp.now(),
     //     MsgType: "transfer_customer_service",
-    // }                
+    // }
+
+    if ((ctx.request.body.MsgType == 'event') && (ctx.request.body.Event == 'user_enter_tempsession')) {
+        msg.Content = '欢迎访问客服'
+        console.log('user enter customer dialog')
+    }
+
     console.log('reply customer msg : ' + JSON.stringify(msg))
     ctx.response.type = "application/json"
     ctx.response.status = 200
