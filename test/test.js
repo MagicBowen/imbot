@@ -1,9 +1,12 @@
 const assert = require('assert');
+const seeds = require('../models/msg-seed')
 
-describe('Placeholder', function () {
-  describe('#placeholder1', function () {
-    it('should return -1 when the value is not present', function () {
-      assert.equal([1,2,3].indexOf(4), -1);
+describe('MsgSeed', function () {
+  describe('#msgSeed1', function () {
+    it('should get the seed after seed been added', function () {
+      seeds.addSeed('o2Yr80F10xpY5_hi6bzHm8B6Lywg', '123456')
+      let s = seeds.getSeed('o2Yr80F10xpY5_hi6bzHm8B6Lywg')
+      assert.equal(s, '123456');
     });
   });
 });
