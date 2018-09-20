@@ -8,6 +8,7 @@ class MsgSeed {
             this.seeds[id] = []
         }
         this.seeds[id].push({seed : seed, timestamp : this.getCurrentTimeStamp()})
+        console.log(JSON.stringify(this.seeds))
     }
 
     getSeed(id) {
