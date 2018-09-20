@@ -59,13 +59,13 @@ async function getSignature(ctx) {
 }
 
 async function handleCustomerMsg(ctx) {  
-    let msg = {
-        ToUserName: ctx.request.body.FromUserName,
-        FromUserName: ctx.request.body.ToUserName,
-        CreateTime: timestamp.now(),
-        MsgType: 'text',
-        Content: 'hello'
-    }                
+    // let msg = {
+    //     ToUserName: ctx.request.body.FromUserName,
+    //     FromUserName: ctx.request.body.ToUserName,
+    //     CreateTime: timestamp.now(),
+    //     MsgType: 'text',
+    //     Content: 'hello'
+    // }                
     // let msg = {
     //     ToUserName: ctx.request.body.FromUserName,
     //     FromUserName: ctx.request.body.ToUserName,
@@ -73,15 +73,29 @@ async function handleCustomerMsg(ctx) {
     //     MsgType: "transfer_customer_service",
     // }
 
+    const tocken = await accessTocken.getTocken();
+    const url = 'https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=' + tocken
+
+    const msg = {
+        touser  : ctx.request.body.FromUserName,
+        msgtype : "text",
+        text :
+        {
+             content : ctx.request.body.Content
+        }
+    }
+
     if ((ctx.request.body.MsgType == 'event') && (ctx.request.body.Event == 'user_enter_tempsession')) {
-        msg.Content = '欢迎访问客服'
+        msg.text.content = '欢迎访问客服'
         console.log('user enter customer dialog')
     }
 
     console.log('reply customer msg : ' + JSON.stringify(msg))
+
+    await postJson(url, msg)
     ctx.response.type = "application/json"
     ctx.response.status = 200
-    ctx.response.body = msg
+    ctx.response.body = ''
 }
 
 async function saveFormIdForTemplateMsg(ctx) {
