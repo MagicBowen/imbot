@@ -16,6 +16,7 @@ class MsgSeed {
         console.log(JSON.stringify(this.seeds[id]))
         console.log(this.seeds.hasOwnProperty(id))
         console.log(this.seeds[id])
+        console.log(this.seeds)
         if (!this.seeds[id]) {
             console.log('no seed for id ' + id)
             return null
