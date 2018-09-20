@@ -59,18 +59,25 @@ async function getSignature(ctx) {
 }
 
 async function handleCustomerMsg(ctx) {
+    // let msg = {
+    //     touser : ctx.request.body.FromUserName,
+    //     msgtype : "text",
+    //     text :
+    //     {
+    //         content : ctx.request.body.text + '_test'
+    //     }
+    // }    
     let msg = {
-        touser : ctx.request.body.FromUserName,
-        msgtype : "text",
-        text :
-        {
-            content : ctx.request.body.text + '_test'
-        }
+        ToUserName: ctx.request.body.FromUserName,
+        FromUserName: ctx.request.body.ToUserName,
+        CreateTime: timestamp.now(),
+        MsgType: "text",
+        Content: ctx.request.body.text,
+        MsgId: ctx.request.body.MsgId
     }                
     console.log('reply customer msg : ' + JSON.stringify(msg))
     ctx.response.status = 200
     ctx.response.body = msg
-    
 }
 
 async function saveFormIdForTemplateMsg(ctx) {
