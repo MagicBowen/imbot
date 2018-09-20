@@ -12,6 +12,7 @@ class MsgSeed {
     }
 
     getSeed(id) {
+        console.log(JSON.stringify(this.seeds[id]))
         if (!this.seeds[id]) {
             console.log('no seed for id ' + id)
             return null
