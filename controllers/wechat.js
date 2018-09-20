@@ -72,7 +72,7 @@ async function handleCustomerMsg(ctx) {
         FromUserName: ctx.request.body.ToUserName,
         CreateTime: timestamp.now(),
         MsgType: "text",
-        Content: ctx.request.body.text,
+        Content: ctx.request.body.Content,
         MsgId: ctx.request.body.MsgId
     }                
     console.log('reply customer msg : ' + JSON.stringify(msg))
