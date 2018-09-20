@@ -17,6 +17,8 @@ class MsgSeed {
         console.log(this.seeds.hasOwnProperty(id))
         console.log(this.seeds[id])
         console.log(this.seeds)
+        console.log(id)
+        console.log(id.type)
         if (!this.seeds[id]) {
             console.log('no seed for id ' + id)
             return null
