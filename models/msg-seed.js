@@ -8,32 +8,21 @@ class MsgSeed {
             this.seeds[id] = []
         }
         this.seeds[id].push({seed : seed, timestamp : this.getCurrentTimeStamp()})
-        console.log(JSON.stringify(this.seeds))
     }
 
     getSeed(id) {
-        console.log(JSON.stringify(this.seeds))
-        console.log(JSON.stringify(this.seeds[id]))
-        console.log(this.seeds.hasOwnProperty(id))
-        console.log(this.seeds[id])
-        console.log(this.seeds)
-        console.log(id)
-        console.log(id.type)
         if (!this.seeds[id]) {
-            console.log('no seed for id ' + id)
             return null
         }
 
         while (this.seeds[id].length > 0) {
             let seed = this.seeds[id].pop()
             if (this.isExpired(seed)) {
-                console.log('expired seed for id ' + id)
                 continue
             }
             return seed.seed
         }
 
-        console.log('not found seed for id ' + id)
         return null
     }
 
