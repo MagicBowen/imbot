@@ -2,6 +2,7 @@ const axios = require('axios');
 const postJson = require('../utils/post-json')
 const config = require('../config');
 const accessTocken = require('../utils/access-tocken');
+const seeds = require('../models/msg-seed')
 const logger = require('../utils/logger').logger('wechat');
 
 async function getOpenId(ctx) {
@@ -26,16 +27,32 @@ async function getOpenId(ctx) {
     }
 }
 
+async function saveFormIdForTemplateMsg(ctx) {
+    const openId = ctx.request.body.openId
+    const formId = ctx.request.body.formId
+    seeds.addSeed(openId, formId)
+    ctx.response.type = "application/json"
+    ctx.response.status = 200
+    ctx.response.body = {result : 'success'}
+}
+
 async function sendTemplateMsg(ctx) {
     const tocken = await accessTocken.getTocken();
     const url = 'https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token=' + tocken;
-
+    const openId = ctx.request.body.openId
+    const seed = seeds.getSeed(openId)
+    if (!seed) {
+        ctx.response.status = 404;
+        ctx.response.body = {result : 'no seed for sending template msg'}
+        logger.error('send template msg error because of no seed for id ' + openId)
+        return
+    }
     try {
         const result = await postJson(url,
                 {
                     template_id: 'jGlP_HnrwRBot5E0_vJu3Y0J8KFgRFep8AEuQBwxUTg',
                     page: "index",
-                    form_id: ctx.request.body.formId,
+                    form_id: seed,
                     data: {
                         keyword1: {
                             value: "数学"
@@ -54,20 +71,22 @@ async function sendTemplateMsg(ctx) {
                         }
                     },
                     emphasis_keyword: "keyword1.DATA",
-                    touser: 'o2Yr80OCnF1rMkmf6ss10aj3CzAw'
+                    touser: openId
                 }
         );
     
-        ctx.response.type = "application/json";
-        ctx.response.status = 200;
-        ctx.response.body = result;
+        ctx.response.type = "application/json"
+        ctx.response.status = 200
+        ctx.response.body = result
     } catch(err) {
-        ctx.response.status = 404;
-        logger.error('send template msg error: ' + err);
+        ctx.response.status = 404
+        ctx.response.body = err
+        logger.error('send template msg error: ' + err)
     }
 }
 
 module.exports = {
     'GET /openid' : getOpenId,
-    'POST /template_msg' : sendTemplateMsg
+    'POST /template_msg' : sendTemplateMsg,
+    'POST /form_id' : saveFormIdForTemplateMsg
 };
