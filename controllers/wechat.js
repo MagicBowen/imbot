@@ -4,6 +4,7 @@ const postJson = require('../utils/post-json')
 const config = require('../config');
 const accessTocken = require('../utils/access-tocken');
 const seeds = require('../models/msg-seed')
+const timestamp = require('../utils/timestamp')
 const logger = require('../utils/logger').logger('wechat');
 
 async function getOpenId(ctx) {
@@ -58,9 +59,17 @@ async function getSignature(ctx) {
 }
 
 async function handleCustomerMsg(ctx) {
-    console.log(ctx.request.body)
+    let msg = {
+        touser : ctx.request.body.FromUserName,
+        msgtype : "text",
+        text :
+        {
+             content : ctx.request.body.text
+        }
+    }                
     ctx.response.status = 200
-    ctx.response.body = ""
+    ctx.response.body = msg
+    
 }
 
 async function saveFormIdForTemplateMsg(ctx) {

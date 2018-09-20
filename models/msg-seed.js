@@ -1,3 +1,5 @@
+const timestamp = require('../utils/timestamp')
+
 class MsgSeed {
     constructor() {
         this.seeds = {}
@@ -7,7 +9,7 @@ class MsgSeed {
         if (!this.seeds[id]) {
             this.seeds[id] = []
         }
-        this.seeds[id].push({seed : seed, timestamp : this.getCurrentTimeStamp()})
+        this.seeds[id].push({seed : seed, timestamp : timestamp.now()})
     }
 
     getSeed(id) {
@@ -27,11 +29,7 @@ class MsgSeed {
     }
 
     isExpired(seed) {
-        return ((this.getCurrentTimeStamp() - seed.timestamp) > (7 * 24 * 3600 - 1000))
-    }
-
-    getCurrentTimeStamp() {
-        return Math.floor(Date.now() / 1000)
+        return ((timestamp.now() - seed.timestamp) > (7 * 24 * 3600 - 1000))
     }
 }
 
