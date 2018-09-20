@@ -27,6 +27,41 @@ async function getOpenId(ctx) {
     }
 }
 
+function sha1(str) {
+    var md5sum = crypto.createHash("sha1");
+    md5sum.update(str);
+    str = md5sum.digest("hex");
+    return str;
+}
+
+async function getSignature(ctx) {
+    var query = ctx.query;
+    var signature = query.signature;
+    var echostr = query.echostr;
+    var timestamp = query['timestamp'];
+    var nonce = query.nonce;
+    var oriArray = new Array();
+    oriArray[0] = nonce;
+    oriArray[1] = timestamp;
+    oriArray[2] = config.token;
+    oriArray.sort();
+    var original = oriArray.join('');
+    var scyptoString = sha1(original);
+    if (signature == scyptoString) {
+        ctx.response.status = 200
+        ctx.response.body = echostr
+    } else {
+        ctx.response.status = 404;
+        ctx.response.body = "false"
+    }
+}
+
+async function handleCustomerMsg(ctx) {
+    console.log(ctx.request.body)
+    ctx.response.status = 200
+    ctx.response.body = ""
+}
+
 async function saveFormIdForTemplateMsg(ctx) {
     const openId = ctx.request.body.openId
     const formId = ctx.request.body.formId
@@ -88,5 +123,7 @@ async function sendTemplateMsg(ctx) {
 module.exports = {
     'GET /openid' : getOpenId,
     'POST /template_msg' : sendTemplateMsg,
-    'POST /form_id' : saveFormIdForTemplateMsg
+    'POST /form_id' : saveFormIdForTemplateMsg,
+    'GET /wechat/customer' : getSignature,
+    'POST /wechat/customer' : handleCustomerMsg
 };
