@@ -35,7 +35,7 @@ async function sendTemplateMsg(ctx) {
                 params: {
                     template_id: 'jGlP_HnrwRBot5E0_vJu3Y0J8KFgRFep8AEuQBwxUTg',
                     page: "index",
-                    form_id: ctx.body.formId,
+                    form_id: ctx.request.body.formId,
                     data: {
                         keyword1: {
                             value: "数学"
@@ -66,7 +66,6 @@ async function sendTemplateMsg(ctx) {
         ctx.response.status = 404;
         logger.error('send template msg error: ' + err);
     }
-
 }
 
 module.exports = {
