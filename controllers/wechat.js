@@ -37,14 +37,10 @@ function sha1(str) {
 
 async function getSignature(ctx) {
     var query = ctx.query;
-    var signature = '5c53aced513d26cd573a386c773a81704f70d552';
-    var echostr = '5029819452051945885';
-    var nonce = 365887139;
-    var timestamp = 1537448212;
-    // var signature = query.signature;
-    // var echostr = query.echostr;
-    // var nonce = query.nonce;
-    // var timestamp = query['timestamp'];
+    var signature = query.signature;
+    var echostr = query.echostr;
+    var nonce = query.nonce;
+    var timestamp = query['timestamp'];
     var oriArray = new Array();
     oriArray[0] = nonce;
     oriArray[1] = timestamp;
