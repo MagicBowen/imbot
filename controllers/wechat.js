@@ -64,9 +64,10 @@ async function handleCustomerMsg(ctx) {
         msgtype : "text",
         text :
         {
-             content : ctx.request.body.text
+            content : ctx.request.body.text + '_test'
         }
     }                
+    console.log('reply customer msg : ' + JSON.stringify(msg))
     ctx.response.status = 200
     ctx.response.body = msg
     
