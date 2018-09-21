@@ -9,18 +9,18 @@ class SeedRepo {
     }
 
     addSeed(id, seed) {
-        this.client.rpush(id, JSON.stringify({seed : seed, timestamp : timestamp.now()}))
+        this.client.rpush(this.getSeedQueueName(id), JSON.stringify({seed : seed, timestamp : timestamp.now()}))
     }
 
     async getSeed(id) {
-        if (this.client.llen(id) === 0) {
+        if (this.client.llen(this.getSeedQueueName(id)) === 0) {
             return null
         }
 
         const lpopAsync = promisify(this.client.lpop).bind(this.client);
 
-        while (this.client.llen(id) > 0) {
-            let seed = await lpopAsync(id)
+        while (this.client.llen(this.getSeedQueueName(id)) > 0) {
+            let seed = await lpopAsync(this.getSeedQueueName(id))
             seed = JSON.parse(seed)
             if (this.isExpired(seed)) {
                 continue
@@ -33,6 +33,10 @@ class SeedRepo {
 
     isExpired(seed) {
         return ((timestamp.now() - seed.timestamp) > (7 * 24 * 3600 - 1000))
+    }
+
+    getSeedQueueName(id) {
+        return 'seed_' + id
     }
 }
 
