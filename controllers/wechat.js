@@ -3,8 +3,7 @@ const crypto = require('crypto');
 const postJson = require('../utils/post-json')
 const config = require('../config');
 const accessTocken = require('../utils/access-tocken');
-const seeds = require('../models/msg-seed')
-const timestamp = require('../utils/timestamp')
+const seeds = require('../models/seed-repo')
 const logger = require('../utils/logger').logger('wechat');
 
 async function getOpenId(ctx) {
