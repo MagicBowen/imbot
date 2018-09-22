@@ -4,6 +4,7 @@ const koaBody = require('koa-body');
 const views = require('koa-views');
 const session = require('koa-session');
 const config = require('./config')
+const redis = require('./models/redis-client')
 
 const responseTime = require('./middlewares/response-time');
 const controllerRouter = require('./middlewares/controller-router');

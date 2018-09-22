@@ -1,11 +1,10 @@
-const redis = require('redis')
-const config = require('../config')
-const {promisify} = require('util');
+const redis = require('./redis-client')
+const {promisify} = require('util')
 const timestamp = require('../utils/timestamp')
 
 class SeedRepo {
     constructor() {
-        this.client = redis.createClient(config.redis_port, config.redis_host)
+        this.client = redis.client
     }
 
     addSeed(id, seed) {
@@ -13,13 +12,13 @@ class SeedRepo {
     }
 
     async getSeed(id) {
-        if (this.client.llen(this.getSeedQueueName(id)) === 0) {
+        const llenAsync = promisify(this.client.llen).bind(this.client);
+        if (await llenAsync(this.getSeedQueueName(id)) === 0) {
             return null
         }
 
         const lpopAsync = promisify(this.client.lpop).bind(this.client);
-
-        while (this.client.llen(this.getSeedQueueName(id)) > 0) {
+        while (await llenAsync(this.getSeedQueueName(id)) > 0) {
             let seed = await lpopAsync(this.getSeedQueueName(id))
             seed = JSON.parse(seed)
             if (this.isExpired(seed)) {
