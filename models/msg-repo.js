@@ -16,7 +16,7 @@ class MsgRepo {
         await this.onNewMsgArrived(fromUserId, toUserId, msg)
     }
 
-    async getMsgsby(fromUserId, toUserId) {
+    async getMsgsBy(fromUserId, toUserId) {
         let msgs = []
         const llenAsync = promisify(this.client.llen).bind(this.client)
         const lpopAsync = promisify(this.client.lpop).bind(this.client)

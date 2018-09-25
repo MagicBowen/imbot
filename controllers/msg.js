@@ -5,7 +5,7 @@ async function getPendingMsgs(ctx) {
     const fromUserId = ctx.query.fromUserId
     const toUserId = ctx.query.toUserId
     try {
-        const msgs = await msgRepo.getMsgsby(fromUserId, toUserId)
+        const msgs = await msgRepo.getMsgsBy(fromUserId, toUserId)
         ctx.response.type = "application/json"
         ctx.response.status = 200
         ctx.response.body = {msgs : msgs}

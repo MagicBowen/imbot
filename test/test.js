@@ -16,7 +16,7 @@ describe('repo', function () {
       await msgRepo.addPendingMsg('Bowen', 'Juo', {text : 'hello', timestamp : 123456})
       await msgRepo.addPendingMsg('Bowen', 'Juo', {text : 'bye', timestamp : 1234578})
       let count = await msgRepo.getPendingMsgCount('Bowen', 'Juo')
-      let msgs = await msgRepo.getMsgsby('Bowen', 'Juo')
+      let msgs = await msgRepo.getMsgsBy('Bowen', 'Juo')
       assert.equal(count, 2);
       assert.equal(JSON.stringify(msgs), JSON.stringify([{text : 'hello', timestamp : 123456}, {text : 'bye', timestamp : 1234578}]));
     });
@@ -25,8 +25,8 @@ describe('repo', function () {
       await msgRepo.addPendingMsg('Macheal', 'Darwin', {text : 'bye', timestamp : 1234578})
       await msgRepo.addPendingMsg('Bowen', 'Darwin', {text : 'hi', timestamp : 1234567})
       let result = await msgRepo.getPendingCountList('Darwin')
-      await msgRepo.getMsgsby('Bowen', 'Darwin')
-      await msgRepo.getMsgsby('Macheal', 'Darwin')
+      await msgRepo.getMsgsBy('Bowen', 'Darwin')
+      await msgRepo.getMsgsBy('Macheal', 'Darwin')
 
       const expect = [{fromUserId : 'Macheal', count : 1, timestamp : 1234578},
                       {fromUserId : 'Bowen', count : 2, timestamp : 1234567}]
