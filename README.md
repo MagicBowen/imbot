@@ -29,7 +29,7 @@ host : https://xiaodamp.cn/api/imbot
 
 微信后台消息推送服务器接口，用于绑定客服消息服务器地址用
 
-### GET /pending_count'
+### 'GET /pending_count'
 
 获取从fromUserId发往toUserId当前未处理的消息数
 
@@ -40,7 +40,7 @@ host : https://xiaodamp.cn/api/imbot
 - result
     - {count : 2} 
 
-### GET /pending_count_list'
+### 'GET /pending_count_list'
 
 获取指定用户当前所有未处理的消息数列表
 
@@ -50,7 +50,7 @@ host : https://xiaodamp.cn/api/imbot
 - result
     - {fromUserId1 : 2, fromUserId2 : 1} 
 
-### GET /pending_msgs'
+### 'GET /pending_msgs'
 
 获取指定用户当前未处理的所有消息
 
@@ -61,7 +61,7 @@ host : https://xiaodamp.cn/api/imbot
 - result
     - {msgs : []}
 
-### POST /msg'
+### 'POST /msg'
 
 发送消息
 
@@ -78,6 +78,36 @@ host : https://xiaodamp.cn/api/imbot
     }
 }
 ```
+
+### 'POST /image'
+
+上传图片
+
+- parameters
+    - upload : files.image
+
+- result
+    - {url : 'image/xxxxxx.jpg'}
+
+### 'POST /audio'
+
+上传音频
+
+- parameters
+    - upload : files.audio
+
+- result
+    - {url : 'audio/xxxxxx.jpg'}
+
+### 'POST /vedio'
+
+上传视频
+
+- parameters
+    - upload : files.vedio
+
+- result
+    - {url : 'vedio/xxxxxx.jpg'}
 
 ## environment
 
