@@ -33,6 +33,21 @@ async function getPendingCount(ctx) {
     }
 }
 
+async function getPendingCountList(ctx) {
+    const userId = ctx.query.userId
+    try {
+        const count = await msgRepo.getPendingCountList(userId)
+        ctx.response.type = "application/json"
+        ctx.response.status = 200
+        ctx.response.body = {count : count}
+    } catch (err) {
+        ctx.response.type = "application/json"
+        ctx.response.status = 404;
+        ctx.response.body = {error : err}
+        logger.error('get pending count error: ' + err)
+    }
+}
+
 async function sendMsg(ctx) {
     const fromUserId = ctx.request.body.fromUserId
     const toUserId = ctx.request.body.toUserId
@@ -54,5 +69,6 @@ async function sendMsg(ctx) {
 module.exports = {
     'GET /pending_msgs' : getPendingMsgs,
     'GET /pending_count' : getPendingCount,
+    'GET /pending_count_list' : getPendingCountList,
     'POST /msg' : sendMsg
 };

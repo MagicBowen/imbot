@@ -31,7 +31,7 @@ host : https://xiaodamp.cn/api/imbot
 
 ### GET /pending_count'
 
-获取指定用户当前未处理的消息数
+获取从fromUserId发往toUserId当前未处理的消息数
 
 - parameters
     - fromUserId
@@ -39,6 +39,16 @@ host : https://xiaodamp.cn/api/imbot
 
 - result
     - {count : 2} 
+
+### GET /pending_count_list'
+
+获取指定用户当前所有未处理的消息数列表
+
+- parameters
+    - userId
+
+- result
+    - {fromUserId1 : 2, fromUserId2 : 1} 
 
 ### GET /pending_msgs'
 

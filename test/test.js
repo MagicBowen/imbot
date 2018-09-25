@@ -22,8 +22,8 @@ describe('repo', function () {
     });
     it('should get the counts after msgs been added', async function () {
       msgRepo.addPendingMsg('Bowen', 'Darwin', {text : 'hello', timestamp : 123456})
-      msgRepo.addPendingMsg('Bowen', 'Darwin', {text : 'hi', timestamp : 123456})
       msgRepo.addPendingMsg('Macheal', 'Darwin', {text : 'bye', timestamp : 1234578})
+      msgRepo.addPendingMsg('Bowen', 'Darwin', {text : 'hi', timestamp : 123456})
       let list = await msgRepo.getPendingCountList('Darwin')
       await msgRepo.getMsgsby('Bowen', 'Darwin')
       await msgRepo.getMsgsby('Macheal', 'Darwin')
