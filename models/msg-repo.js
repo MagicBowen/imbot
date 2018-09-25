@@ -31,12 +31,19 @@ class MsgRepo {
     async getPendingCountList(userId) {
         const keysAsync = promisify(this.client.keys).bind(this.client)
         const llenAsync = promisify(this.client.llen).bind(this.client)
+        const lindexAsync = promisify(this.client.lindex).bind(this.client)
         const toUserQueues = await keysAsync(`*:${userId}`)
-        let result = {}
+        let result = []
         for (let queue of toUserQueues) {
-            result[this.getFromUserIdFromQueueName(queue)] = await llenAsync(queue)
+            const length = await llenAsync(queue)
+            if (length > 0) {
+                const fromUserId = this.getFromUserIdFromQueueName(queue)
+                let lastMsg = await lindexAsync(queue, -1)
+                lastMsg = JSON.parse(lastMsg)
+                result.push({fromUserId : fromUserId, count : await llenAsync(queue), timestamp : lastMsg.timestamp})
+            }
         }
-        return result
+        return result.sort((a, b) => {return a.timestamp < b.timestamp})
     }
 
     onNewMsgArrived(fromUserId, toUserId, msg) {
