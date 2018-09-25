@@ -4,7 +4,6 @@ const koaBody = require('koa-body');
 const views = require('koa-views');
 const session = require('koa-session');
 const config = require('./config')
-const redis = require('./models/redis-client')
 
 const responseTime = require('./middlewares/response-time');
 const controllerRouter = require('./middlewares/controller-router');
@@ -19,7 +18,12 @@ app.use(session(app));
 app.use(responseTime());
 app.use(serve('./static'));
 app.use(views(__dirname + '/views', { map: {html: 'nunjucks' }}));
-app.use(koaBody());
+app.use(koaBody({
+    multipart: true,
+    formidable: {
+        maxFieldsSize: 20*1024*1024
+    }
+}));
 app.use(controllerRouter(__dirname + '/controllers'));
 
 ///////////////////////////////////////////////////////////
