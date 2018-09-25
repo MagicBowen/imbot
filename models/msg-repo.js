@@ -1,4 +1,6 @@
 const redis = require('./redis-client')
+const TemplateMsg = require('../utils/template-msg')
+const config = require('../config')
 const {promisify} = require('util')
 
 class MsgRepo {
@@ -8,6 +10,7 @@ class MsgRepo {
 
     addPendingMsg(fromUserId, toUserId, msg) {
         this.client.rpush(this.getMsgQueueName(fromUserId, toUserId), JSON.stringify(msg))
+        this.onNewMsgArrived(fromUserId, toUserId, msg)
     }
 
     async getMsgsby(fromUserId, toUserId) {
@@ -19,6 +22,8 @@ class MsgRepo {
             let msg = await lpopAsync(this.getMsgQueueName(fromUserId, toUserId))
             msgs.push(JSON.parse(msg))
         }
+
+        this.clearTimerForMsg(toUserId)
 
         return msgs
     }
@@ -47,7 +52,33 @@ class MsgRepo {
     }
 
     onNewMsgArrived(fromUserId, toUserId, msg) {
-        
+        const getAsync = promisify(this.client.get).bind(this.client)
+        const timerId = getAsync(this.getPendingMsgTimerKey(toUserId))
+        if (!timerId) {
+            this.setTimerForNewMsg(fromUserId, toUserId, msg)
+        }
+    }
+
+    setTimerForNewMsg(fromUserId, toUserId, msg) {
+        let timer = setTimeout(function() {
+            try {
+                const result = TemplateMsg.send(fromUserId, toUserId, msg)
+                logger.info('send template msg when timeout, result is ' + result)
+            } catch (err) {
+                logger.error(`send template msg error, because of ` + err)
+                this.setTimerForNewMsg(fromUserId, toUserId, msg)
+            }
+        }, config.msg_notify_wait_second * 1000)
+        this.client.set(this.getPendingMsgTimerKey(toUserId), timer)
+    }
+
+    clearTimerForMsg(toUserId) {
+        const timerId = this.getPendingMsgTimerKey(toUserId)
+        const getAsync = promisify(this.client.get).bind(this.client)
+        const timerId = getAsync(this.getPendingMsgTimerKey(toUserId))
+        if (timerId) {
+            clearTimeout(timerId)
+        }
     }
 
     getFromUserIdFromQueueName(queue) {
