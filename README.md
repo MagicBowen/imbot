@@ -48,7 +48,7 @@ host : https://xiaodamp.cn/api/imbot
     - userId
 
 - result
-    - {fromUserId1 : 2, fromUserId2 : 1} 
+    - [{"fromUserId":"Macheal","timestamp":1234578,"count":1},{"fromUserId":"Bowen","timestamp":1234567,"count":2}]
 
 ### 'GET /pending_msgs'
 
