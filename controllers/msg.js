@@ -53,7 +53,7 @@ async function sendMsg(ctx) {
     const toUserId = ctx.request.body.toUserId
     const msg = ctx.request.body.msg
     try {
-        msgRepo.addPendingMsg(fromUserId, toUserId, msg)
+        await msgRepo.addPendingMsg(fromUserId, toUserId, msg)
         ctx.response.type = "application/json";
         ctx.response.status = 200;
         ctx.response.body = {result : 'success'};        
@@ -61,7 +61,8 @@ async function sendMsg(ctx) {
         ctx.response.type = "application/json"
         ctx.response.status = 404;
         ctx.response.body = {error : err}
-        logger.error('send msg error: ' + err)   
+        logger.error('send msg error: ' + err) 
+        logger.error(err.stack)  
     }
 }
 

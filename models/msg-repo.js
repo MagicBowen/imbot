@@ -2,15 +2,18 @@ const redis = require('./redis-client')
 const TemplateMsg = require('../utils/template-msg')
 const config = require('../config')
 const {promisify} = require('util')
+const Timestamp = require('../utils/timestamp')
+const logger = require('../utils/logger').logger('msg-repo')
 
 class MsgRepo {
     constructor() {
         this.client = redis.client
+        this.timers = {}
     }
 
-    addPendingMsg(fromUserId, toUserId, msg) {
+    async addPendingMsg(fromUserId, toUserId, msg) {
         this.client.rpush(this.getMsgQueueName(fromUserId, toUserId), JSON.stringify(msg))
-        this.onNewMsgArrived(fromUserId, toUserId, msg)
+        await this.onNewMsgArrived(fromUserId, toUserId, msg)
     }
 
     async getMsgsby(fromUserId, toUserId) {
@@ -23,7 +26,7 @@ class MsgRepo {
             msgs.push(JSON.parse(msg))
         }
 
-        this.clearTimerForMsg(toUserId)
+        await this.clearTimerForMsg(toUserId)
 
         return msgs
     }
@@ -51,33 +54,42 @@ class MsgRepo {
         return result.sort((a, b) => {return a.timestamp < b.timestamp})
     }
 
-    onNewMsgArrived(fromUserId, toUserId, msg) {
+    async onNewMsgArrived(fromUserId, toUserId, msg) {
+        logger.debug(`new msg arrived : ${fromUserId} to ${toUserId} of ${JSON.stringify(msg)}`)
         const getAsync = promisify(this.client.get).bind(this.client)
-        const timerId = getAsync(this.getPendingMsgTimerKey(toUserId))
-        if (!timerId) {
-            this.setTimerForNewMsg(fromUserId, toUserId, msg)
+        const timestamp = await getAsync(this.getPendingMsgTimerKey(toUserId))
+        if (!this.timers[toUserId]){
+            this.setTimerForNewMsg(fromUserId, toUserId, msg, 1)
         }
     }
 
-    setTimerForNewMsg(fromUserId, toUserId, msg) {
-        let timer = setTimeout(function() {
+    setTimerForNewMsg(fromUserId, toUserId, msg, repeatCount) {
+        let that = this
+        let timer = setTimeout(async function() {
             try {
-                const result = TemplateMsg.send(fromUserId, toUserId, msg)
-                logger.info('send template msg when timeout, result is ' + result)
+                const result = await TemplateMsg.send(fromUserId, toUserId, msg)
+                logger.debug('send template msg when timeout, result is ' + JSON.stringify(result))
             } catch (err) {
                 logger.error(`send template msg error, because of ` + err)
-                this.setTimerForNewMsg(fromUserId, toUserId, msg)
+            } finally {
+                that.setTimerForNewMsg(fromUserId, toUserId, msg, repeatCount * 2)
             }
-        }, config.msg_notify_wait_second * 1000)
-        this.client.set(this.getPendingMsgTimerKey(toUserId), timer)
+        }, config.msg_notify_wait_second * 1000 * repeatCount)
+
+        const now = Timestamp.now()
+        this.timers[toUserId] = timer
+        this.client.set(this.getPendingMsgTimerKey(toUserId), now)
+        logger.debug(`set timer ${now} for new msg of user ${toUserId} on repeat count ${repeatCount}`)
     }
 
-    clearTimerForMsg(toUserId) {
-        const timerId = this.getPendingMsgTimerKey(toUserId)
+    async clearTimerForMsg(toUserId) {
         const getAsync = promisify(this.client.get).bind(this.client)
-        const timerId = getAsync(this.getPendingMsgTimerKey(toUserId))
-        if (timerId) {
-            clearTimeout(timerId)
+        if (this.timers[toUserId]) {
+            clearTimeout(this.timers[toUserId])
+            this.timers[toUserId] = null
+            const timestamp = await getAsync(this.getPendingMsgTimerKey(toUserId))
+            this.client.del(this.getPendingMsgTimerKey(toUserId))
+            logger.debug(`clear timer ${timestamp} for user ${toUserId}`)
         }
     }
 

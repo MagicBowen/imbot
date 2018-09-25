@@ -13,7 +13,7 @@ async function sendTemplateMsg(fromUserId, toUserId, msg) {
         logger.error('send template msg error because of no seed for id ' + toUserId)
         throw {result : 'no seed for sending template msg'}
     }
-    return await postJson(url,
+    const result = await postJson(url,
                 {
                     template_id: 'jGlP_HnrwRBot5E0_vJu3Y0J8KFgRFep8AEuQBwxUTg',
                     page: "index",
@@ -39,6 +39,7 @@ async function sendTemplateMsg(fromUserId, toUserId, msg) {
                     touser: toUserId
                 }
         )
+        return result
 }
 
 module.exports.send = sendTemplateMsg
