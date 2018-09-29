@@ -10,6 +10,10 @@ const controllerRouter = require('./middlewares/controller-router');
 const logger = require('./utils/logger').logger('server');
 
 ///////////////////////////////////////////////////////////
+const model = require('./models/model');
+model.init();
+
+///////////////////////////////////////////////////////////
 const app = new Koa();
 app.keys = ['KOA KICKOFF'];
 

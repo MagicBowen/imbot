@@ -11,6 +11,48 @@ host : https://xiaodamp.cn/api/imbot
 - parameters
     - code    
 
+### 'POST /user'
+
+上传或者修改user信息
+
+- parameters
+
+```json
+{
+	"id" : "ob124wev23435234cdfd34",
+    "wechat" : {
+    	"nickName" : "franck",
+    	"gender" : "female",
+    	"avatarUrl" : "http://profile1.png"
+    }
+}
+```
+
+### 'GET user'
+
+根据ID获取user信息
+
+- parameters
+    - id : user的id
+
+- result
+
+```json
+{
+	"id" : "ob124wev23435234cdfd34",
+    "wechat" : {
+    	"nickName" : "franck",
+    	"gender" : "female",
+    	"avatarUrl" : "http://profile1.png"
+    }
+}
+```
+
+### 'GET users'
+
+获取所有user信息列表
+
+
 ### 'POST /template_msg'
 
 测试接口，发送模板消息
@@ -72,7 +114,7 @@ host : https://xiaodamp.cn/api/imbot
     fromUserId : "Bowen", 
     toUserId : "Joe", 
     msg : {
-        type : "text",      // text  | image
+        type : "text",      // text | image
         reply : "hello",     // reply | url
         timestamp : 1537606347 // UTC timestamp, unit : second
     }
