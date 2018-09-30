@@ -4,6 +4,7 @@ const Schema = mongoose.Schema;
 
 mongoose.model('Users', new Schema({
     id: { type: String, unique: true, required: true},
+    role : {type: String, required: true},
     wechat: {
         nickName : String,
         gender   : String,

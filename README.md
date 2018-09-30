@@ -39,7 +39,8 @@ host : https://xiaodamp.cn/api/imbot
 
 ```json
 {
-	"id" : "ob124wev23435234cdfd34",
+    "id" : "ob124wev23435234cdfd34",
+    "role" : "B",  // B | C
     "wechat" : {
     	"nickName" : "franck",
     	"gender" : "female",
