@@ -103,24 +103,21 @@ async function sendTemplateMsg(ctx) {
     try {
         const result = await postJson(url,
                 {
-                    template_id: 'jGlP_HnrwRBot5E0_vJu3Y0J8KFgRFep8AEuQBwxUTg',
+                    template_id: 'OE3Qo9tA7Z3qy3HWJTjkBKQ87jkaWVGDckzWeYN0Dvg',
                     page: "index",
                     form_id: seed,
                     data: {
                         keyword1: {
-                            value: "数学"
+                            value: "Bowen"
                         },
                         keyword2: {
-                            value: "2015年01月05日"
+                            value: "null"
                         },
                         keyword3: {
-                            value: "12:00"
+                            value: "在吗？"
                         },
                         keyword4: {
-                            value: "逸夫教学楼"
-                        },
-                        keyword5: {
-                            value: "401"
+                            value: "2018年10月10日"
                         }
                     },
                     emphasis_keyword: "keyword1.DATA",

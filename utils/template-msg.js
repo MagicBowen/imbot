@@ -14,30 +14,27 @@ async function sendTemplateMsg(fromUserId, toUserId, msg) {
         throw {result : 'no seed for sending template msg'}
     }
     const result = await postJson(url,
-                {
-                    template_id: 'jGlP_HnrwRBot5E0_vJu3Y0J8KFgRFep8AEuQBwxUTg',
-                    page: "index",
-                    form_id: seed,
-                    data: {
-                        keyword1: {
-                            value: "数学"
-                        },
-                        keyword2: {
-                            value: "2015年01月05日"
-                        },
-                        keyword3: {
-                            value: "12:00"
-                        },
-                        keyword4: {
-                            value: "逸夫教学楼"
-                        },
-                        keyword5: {
-                            value: "401"
-                        }
-                    },
-                    emphasis_keyword: "keyword1.DATA",
-                    touser: toUserId
+        {
+            template_id: 'OE3Qo9tA7Z3qy3HWJTjkBKQ87jkaWVGDckzWeYN0Dvg',
+            page: "index",
+            form_id: seed,
+            data: {
+                keyword1: {
+                    value: fromUserId
+                },
+                keyword2: {
+                    value: "null"
+                },
+                keyword3: {
+                    value: (msg.type === 'text') ? msg.reply : '多媒体类型'
+                },
+                keyword4: {
+                    value: (new Date(msg.timestamp)).toLocaleDateString()
                 }
+            },
+            emphasis_keyword: "keyword1.DATA",
+            touser: toUserId
+        }
         )
         return result
 }
