@@ -89,6 +89,14 @@ async function saveFormIdForTemplateMsg(ctx) {
     ctx.response.body = {result : 'success'}
 }
 
+async function clearFromIdForUser(ctx) {
+    const openId = ctx.query.openId
+    await seeds.clear(openId)
+    ctx.response.type = "application/json"
+    ctx.response.status = 200
+    ctx.response.body = {result : 'success'}    
+}
+
 async function sendTemplateMsg(ctx) {
     const tocken = await accessTocken.getTocken();
     const url = 'https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token=' + tocken;
@@ -139,6 +147,7 @@ module.exports = {
     'GET /openid' : getOpenId,
     'POST /template_msg' : sendTemplateMsg,
     'POST /form_id' : saveFormIdForTemplateMsg,
+    'DELETE /form_id' : clearFromIdForUser,
     'GET /wechat/customer' : getSignature,
     'POST /wechat/customer' : handleCustomerMsg
 };

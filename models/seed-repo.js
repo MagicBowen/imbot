@@ -13,6 +13,14 @@ class SeedRepo {
         logger.debug(`add seed ${seed} to repo for user ${id}`)
     }
 
+    clear(id) {
+        const llenAsync = promisify(this.client.llen).bind(this.client);
+        const lpopAsync = promisify(this.client.lpop).bind(this.client);
+        while (await llenAsync(this.getSeedQueueName(id)) > 0) {
+            await lpopAsync(this.getSeedQueueName(id))
+        }
+    }
+
     async getSeed(id) {
         const llenAsync = promisify(this.client.llen).bind(this.client);
         if (await llenAsync(this.getSeedQueueName(id)) === 0) {
