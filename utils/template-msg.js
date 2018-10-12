@@ -8,7 +8,7 @@ const logger = require('../utils/logger').logger('template-msg')
 async function sendTemplateMsg(fromUserId, toUserId, msg) {
     const tocken = await accessTocken.getTocken()
     const url = 'https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token=' + tocken
-    const seed = seeds.getSeed(toUserId)
+    const seed = await seeds.getSeed(toUserId)
     if (!seed) {
         logger.error('send template msg error because of no seed for id ' + toUserId)
         throw {result : 'no seed for sending template msg'}
