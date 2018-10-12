@@ -94,7 +94,7 @@ async function clearFromIdForUser(ctx) {
     await seeds.clear(openId)
     ctx.response.type = "application/json"
     ctx.response.status = 200
-    ctx.response.body = {result : 'success'}    
+    ctx.response.body = {result : 'success'}
 }
 
 async function sendTemplateMsg(ctx) {
