@@ -13,6 +13,7 @@ async function sendTemplateMsg(fromUserId, toUserId, msg) {
         logger.error('send template msg error because of no seed for id ' + toUserId)
         throw {result : 'no seed for sending template msg'}
     }
+    logger.debug(`send template msg from ${fromUserId} to ${toUserId} by formId ${seed} of msg ${JSON.stringify(msg)}`)
     const result = await postJson(url,
         {
             template_id: 'OE3Qo9tA7Z3qy3HWJTjkBKQ87jkaWVGDckzWeYN0Dvg',
@@ -26,7 +27,7 @@ async function sendTemplateMsg(fromUserId, toUserId, msg) {
                     value: "null"
                 },
                 keyword3: {
-                    value: (msg.type === 'text') ? msg.reply : '多媒体类型'
+                    value: (msg.type === 'text') ? msg.reply : '图片或多媒体类型'
                 },
                 keyword4: {
                     value: (new Date(msg.timestamp)).toLocaleDateString()

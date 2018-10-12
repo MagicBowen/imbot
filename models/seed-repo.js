@@ -1,6 +1,7 @@
 const redis = require('./redis-client')
 const {promisify} = require('util')
 const timestamp = require('../utils/timestamp')
+const logger = require('../utils/logger').logger('seedRepo')
 
 class SeedRepo {
     constructor() {
@@ -9,6 +10,7 @@ class SeedRepo {
 
     addSeed(id, seed) {
         this.client.rpush(this.getSeedQueueName(id), JSON.stringify({seed : seed, timestamp : timestamp.now()}))
+        logger.debug(`add seed ${seed} to repo for user ${id}`)
     }
 
     async getSeed(id) {
