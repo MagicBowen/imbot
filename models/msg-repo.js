@@ -59,21 +59,21 @@ class MsgRepo {
         const getAsync = promisify(this.client.get).bind(this.client)
         const timestamp = await getAsync(this.getPendingMsgTimerKey(toUserId))
         if (!this.timers[toUserId]){
-            await this.setTimerForNewMsg(fromUserId, toUserId, msg, 1)
+            this.setTimerForNewMsg(fromUserId, toUserId, msg, 1)
         }
     }
 
-    async setTimerForNewMsg(fromUserId, toUserId, msg, repeatCount) {
+    setTimerForNewMsg(fromUserId, toUserId, msg, repeatCount) {
         let that = this
-        try {
-            const result = await TemplateMsg.send(fromUserId, toUserId, msg)
-            logger.debug('send template msg when timeout, result is ' + JSON.stringify(result))
-        } catch (err) {
-            logger.error(`send template msg error, because of ` + err)
-        }
-
         let timer = setTimeout(async function() {
-            await that.setTimerForNewMsg(fromUserId, toUserId, msg, repeatCount * 2)
+            try {
+                const result = await TemplateMsg.send(fromUserId, toUserId, msg)
+                logger.debug('send template msg when timeout, result is ' + JSON.stringify(result))
+            } catch (err) {
+                logger.error(`send template msg error, because of ` + err)
+            } finally {
+                that.setTimerForNewMsg(fromUserId, toUserId, msg, repeatCount * 2)
+            }
         }, config.msg_notify_wait_second * 1000 * repeatCount)
 
         const now = Timestamp.now()
