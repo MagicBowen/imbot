@@ -56,8 +56,6 @@ class MsgRepo {
 
     async onNewMsgArrived(fromUserId, toUserId, msg) {
         logger.debug(`new msg arrived : ${fromUserId} to ${toUserId} of ${JSON.stringify(msg)}`)
-        const getAsync = promisify(this.client.get).bind(this.client)
-        const timestamp = await getAsync(this.getPendingMsgTimerKey(toUserId))
         if (!this.timers[toUserId]){
             this.setTimerForNewMsg(fromUserId, toUserId, msg, 1)
         }
@@ -72,14 +70,15 @@ class MsgRepo {
             } catch (err) {
                 logger.error(`send template msg error, because of ` + err)
             } finally {
-                that.setTimerForNewMsg(fromUserId, toUserId, msg, repeatCount * 2)
+                this.timers[toUserId] = null
             }
+            // finally {
+            //     that.setTimerForNewMsg(fromUserId, toUserId, msg, repeatCount + 1)
+            // }
         }, config.msg_notify_wait_second * 1000 * repeatCount)
 
-        const now = Timestamp.now()
         this.timers[toUserId] = timer
-        this.client.set(this.getPendingMsgTimerKey(toUserId), now)
-        logger.debug(`set timer ${now} for new msg of user ${toUserId} on repeat count ${repeatCount}`)
+        logger.debug(`set timer for new msg of user ${toUserId} on repeat count ${repeatCount}`)
     }
 
     async clearTimerForMsg(toUserId) {
@@ -87,9 +86,7 @@ class MsgRepo {
         if (this.timers[toUserId]) {
             clearTimeout(this.timers[toUserId])
             this.timers[toUserId] = null
-            const timestamp = await getAsync(this.getPendingMsgTimerKey(toUserId))
-            this.client.del(this.getPendingMsgTimerKey(toUserId))
-            logger.debug(`clear timer ${timestamp} for user ${toUserId}`)
+            logger.debug(`clear timer for user ${toUserId}`)
         }
     }
 
@@ -103,10 +100,6 @@ class MsgRepo {
 
     getMsgQueueName(fromUserId, toUserId) {
         return fromUserId + ':' + toUserId
-    }
-
-    getPendingMsgTimerKey(toId) {
-        return 'timer_' + toId
     }
 }
 
