@@ -1,7 +1,7 @@
 const logger = require('../utils/logger').logger('controller-media');
 const uuid = require('node-uuid');
 const fs = require('fs');
-const ImageUtil = require('../utils/image');
+// const ImageUtil = require('../utils/image');
 
 function saveFile(file, path) {
     return new Promise( (resolve, reject) => {
@@ -25,12 +25,12 @@ function saveFile(file, path) {
 async function postImage(ctx) {
     try {
         let imageFileName = await saveFile(ctx.request.body.files.image, 'static/image');
-        const ext = imageFileName.split('.').pop();
-        let compress = ctx.query.compress;
-        if (compress && ext !== 'gif') {
-            ImageUtil.fitToPhone(imageFileName, 'static/image')
-            logger.debug(`upload image ${imageFileName} has been compressed!`);
-        }
+        // const ext = imageFileName.split('.').pop();
+        // let compress = ctx.query.compress;
+        // if (compress && ext !== 'gif') {
+        //     ImageUtil.fitToPhone(imageFileName, 'static/image')
+        //     logger.debug(`upload image ${imageFileName} has been compressed!`);
+        // }
         ctx.response.body = {url : 'image/' + imageFileName};
         ctx.response.type = "application/json";
         ctx.response.status = 200;
