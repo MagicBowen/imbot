@@ -3,6 +3,7 @@ const TemplateMsg = require('../utils/template-msg')
 const config = require('../config')
 const {promisify} = require('util')
 const Timestamp = require('../utils/timestamp')
+const MsgListener = require('../utils/msg-listener')
 const logger = require('../utils/logger').logger('msg-repo')
 
 class MsgRepo {
@@ -20,13 +21,12 @@ class MsgRepo {
         let msgs = []
         const llenAsync = promisify(this.client.llen).bind(this.client)
         const lpopAsync = promisify(this.client.lpop).bind(this.client)
-        let maxNum = 50
-        while ((await llenAsync(this.getMsgQueueName(fromUserId, toUserId)) > 0) && (maxNum--)) {
+        while (await llenAsync(this.getMsgQueueName(fromUserId, toUserId)) > 0) {
             let msg = await lpopAsync(this.getMsgQueueName(fromUserId, toUserId))
             msgs.push(JSON.parse(msg))
         }
 
-        await this.clearTimerForMsg(toUserId)
+        // await this.clearTimerForMsg(toUserId)
 
         return msgs
     }
@@ -56,39 +56,44 @@ class MsgRepo {
 
     async onNewMsgArrived(fromUserId, toUserId, msg) {
         logger.debug(`new msg arrived : ${fromUserId} to ${toUserId} of ${JSON.stringify(msg)}`)
-        if (!this.timers[toUserId]){
-            this.setTimerForNewMsg(fromUserId, toUserId, msg, 1)
-        }
+        this.client.rpush(MsgListener.queueName, JSON.stringify({fromUserId : fromUserId, toUserId : toUserId, data : msg}))
     }
 
-    setTimerForNewMsg(fromUserId, toUserId, msg, repeatCount) {
-        let that = this
-        let timer = setTimeout(async function() {
-            try {
-                const result = await TemplateMsg.send(fromUserId, toUserId, msg)
-                logger.debug('send template msg when timeout, result is ' + JSON.stringify(result))
-            } catch (err) {
-                logger.error(`send template msg error, because of ` + err)
-            } finally {
-                this.timers[toUserId] = null
-            }
-            // finally {
-            //     that.setTimerForNewMsg(fromUserId, toUserId, msg, repeatCount + 1)
-            // }
-        }, config.msg_notify_wait_second * 1000 * repeatCount)
+    // async onNewMsgArrived(fromUserId, toUserId, msg) {
+    //     logger.debug(`new msg arrived : ${fromUserId} to ${toUserId} of ${JSON.stringify(msg)}`)
+    //     if (!this.timers[toUserId]){
+    //         this.setTimerForNewMsg(fromUserId, toUserId, msg, 1)
+    //     }
+    // }
 
-        this.timers[toUserId] = timer
-        logger.debug(`set timer for new msg of user ${toUserId} on repeat count ${repeatCount}`)
-    }
+    // setTimerForNewMsg(fromUserId, toUserId, msg, repeatCount) {
+    //     let that = this
+    //     let timer = setTimeout(async function() {
+    //         try {
+    //             const result = await TemplateMsg.send(fromUserId, toUserId, msg)
+    //             logger.debug('send template msg when timeout, result is ' + JSON.stringify(result))
+    //         } catch (err) {
+    //             logger.error(`send template msg error, because of ` + err)
+    //         } finally {
+    //             that.timers[toUserId] = null
+    //         }
+    //         // finally {
+    //         //     that.setTimerForNewMsg(fromUserId, toUserId, msg, repeatCount + 1)
+    //         // }
+    //     }, config.msg_notify_wait_second * 1000 * repeatCount)
 
-    async clearTimerForMsg(toUserId) {
-        const getAsync = promisify(this.client.get).bind(this.client)
-        if (this.timers[toUserId]) {
-            clearTimeout(this.timers[toUserId])
-            this.timers[toUserId] = null
-            logger.debug(`clear timer for user ${toUserId}`)
-        }
-    }
+    //     this.timers[toUserId] = timer
+    //     logger.debug(`set timer for new msg of user ${toUserId} on repeat count ${repeatCount}`)
+    // }
+
+    // async clearTimerForMsg(toUserId) {
+    //     const getAsync = promisify(this.client.get).bind(this.client)
+    //     if (this.timers[toUserId]) {
+    //         clearTimeout(this.timers[toUserId])
+    //         this.timers[toUserId] = null
+    //         logger.debug(`clear timer for user ${toUserId}`)
+    //     }
+    // }
 
     getFromUserIdFromQueueName(queue) {
         return queue.split(':')[0]
