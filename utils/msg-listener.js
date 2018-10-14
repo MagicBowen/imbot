@@ -1,9 +1,7 @@
 const redis = require('../models/redis-client')
 const TemplateMsg = require('../utils/template-msg')
 const config = require('../config')
-const {promisify} = require('util')
-const Timestamp = require('../utils/timestamp')
-const logger = require('../utils/period-logger').logger('msg-listener')
+const logger = require('../utils/logger').logger('msg-listener')
 
 const MSG_LISTENER_QUEUE_NAME = 'MsgListenerQueue'
 
