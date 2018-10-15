@@ -1,10 +1,8 @@
 const redis = require('./redis-client')
-const TemplateMsg = require('../utils/template-msg')
-const config = require('../config')
 const {promisify} = require('util')
-const Timestamp = require('../utils/timestamp')
-const MsgListener = require('../utils/msg-listener')
 const logger = require('../utils/logger').logger('msg-repo')
+
+const MSG_LISTENER_QUEUE_NAME = 'MsgListenerQueue'
 
 class MsgRepo {
     constructor() {
@@ -55,8 +53,8 @@ class MsgRepo {
     }
 
     async onNewMsgArrived(fromUserId, toUserId, msg) {
-        logger.debug(`new msg arrived : ${fromUserId} to ${toUserId} of ${JSON.stringify(msg)}`)
-        this.client.rpush(MsgListener.queueName, JSON.stringify({fromUserId : fromUserId, toUserId : toUserId, data : msg}))
+        logger.info(`new msg arrived : ${fromUserId} to ${toUserId} of ${JSON.stringify(msg)}`)
+        this.client.rpush(MSG_LISTENER_QUEUE_NAME, JSON.stringify({fromUserId : fromUserId, toUserId : toUserId, data : msg}))
     }
 
     // async onNewMsgArrived(fromUserId, toUserId, msg) {

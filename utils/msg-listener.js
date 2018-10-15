@@ -1,7 +1,7 @@
 const redis = require('../models/redis-client')
 const TemplateMsg = require('../utils/template-msg')
 const config = require('../config')
-const logger = require('../utils/logger').logger('msg-listener')
+const logger = require('../utils/listener-logger').logger('msg-listener')
 
 const MSG_LISTENER_QUEUE_NAME = 'MsgListenerQueue'
 
@@ -13,6 +13,7 @@ class MsgListener {
 
     async run() {
         while(true) {
+            logger.debug('Msg Listener Keep Alive...')
             await this.handleMsgArrival()
         }
     }
@@ -21,7 +22,7 @@ class MsgListener {
         let result = await redis.cmd.blpop(MSG_LISTENER_QUEUE_NAME, 1)
         if (!result) return
         let msg = JSON.parse(result[1])
-        logger.debug(`handle msg arrived : ${JSON.stringify(msg)}`)
+        logger.info(`handle msg arrived : ${JSON.stringify(msg)}`)
         if (!this.timers[msg.toUserId]){
             this.setTimerForNewMsg(msg.fromUserId, msg.toUserId, msg.data)
         }
@@ -33,9 +34,9 @@ class MsgListener {
             try {
                 if(await redis.cmd.llen(that.getMsgQueueName(fromUserId, toUserId)) > 0) {
                     const result = await TemplateMsg.send(fromUserId, toUserId, msg)
-                    logger.debug('send template msg when timeout, result is ' + JSON.stringify(result))
+                    logger.info('send template msg when timeout, result is ' + JSON.stringify(result))
                 } else {
-                    logger.debug(`template msg (from ${fromUserId} to ${toUserId}) canceled because of no pendding msg in queue`)
+                    logger.info(`template msg (from ${fromUserId} to ${toUserId}) canceled because of no pendding msg in queue`)
                 }
             } catch (err) {
                 logger.error(`send template msg error, because of ${JSON.stringify(err)}`)
@@ -45,7 +46,7 @@ class MsgListener {
         }, config.msg_notify_wait_second * 1000)
 
         this.timers[toUserId] = timer
-        logger.debug(`set timer for new msg of user ${toUserId}`)
+        logger.info(`set timer for new msg of user ${toUserId}`)
     }
 
     async clearTimerForMsg(toUserId) {
