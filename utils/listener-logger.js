@@ -1,6 +1,7 @@
 const log4js = require('log4js');
 
-log4js.configure({
+exports.logger = function(name){
+  log4js.configure({
     appenders: {
       out: { type: 'stdout' },
       app: { type: 'file', filename: 'logs/listener.log' }
@@ -8,9 +9,8 @@ log4js.configure({
     categories: {
       default: { appenders: [ 'out', 'app' ], level: 'debug' }
     }
-});
+  });
 
-exports.logger = function(name){
   var logger = log4js.getLogger(name);
   return logger;
 };

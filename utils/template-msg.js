@@ -3,7 +3,7 @@ const config = require('../config')
 const accessTocken = require('./access-tocken')
 const seeds = require('../models/seed-repo')
 const users = require('../models/user-repo')
-const logger = require('../utils/logger').logger('template-msg')
+const logger = require('../utils/listener-logger').logger('msg-listener')
 
 
 async function sendTemplateMsg(fromUserId, toUserId, msg) {
