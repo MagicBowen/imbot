@@ -1,5 +1,6 @@
 const redis = require('./redis-client')
 const {promisify} = require('util')
+const PersistentMsgs = require('./persistent-msgs')
 const logger = require('../utils/logger').logger('msg-repo')
 
 const MSG_LISTENER_QUEUE_NAME = 'MsgListenerQueue'
@@ -12,6 +13,7 @@ class MsgRepo {
 
     async addPendingMsg(msg) {
         this.client.rpush(this.getMsgQueueName(msg.fromUserId, msg.toUserId), JSON.stringify(msg.msg))
+        await PersistentMsgs.saveMsg(msg)
         await this.onNewMsgArrived(msg)
     }
 

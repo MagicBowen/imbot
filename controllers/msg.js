@@ -1,4 +1,5 @@
 const msgRepo = require('../models/msg-repo')
+const PersistentMsgs = require('../models/persistent-msgs')
 const logger = require('../utils/logger').logger('msg')
 
 async function getPendingMsgs(ctx) {
@@ -63,10 +64,29 @@ async function sendMsg(ctx) {
     }
 }
 
+async function getMsgs(ctx) {
+    const fromUserId = ctx.query.fromUserId
+    const toUserId = ctx.query.toUserId
+    const startTimeStamp = ctx.query.startTimeStamp
+    const endTimeStamp = ctx.query.endTimeStamp
+    try {
+        const msgs = await PersistentMsgs.getMsgsBy(fromUserId, toUserId, startTimeStamp, endTimeStamp)
+        ctx.response.type = "application/json"
+        ctx.response.status = 200
+        ctx.response.body = {result : msgs}
+    } catch (err) {
+        ctx.response.type = "application/json"
+        ctx.response.status = 404;
+        ctx.response.body = {error : err}
+        logger.error('get msgs error: ' + err)
+    }    
+}
+
 
 module.exports = {
     'GET /pending_msgs' : getPendingMsgs,
     'GET /pending_count' : getPendingCount,
     'GET /pending_count_list' : getPendingCountList,
+    'GET /msg'  : getMsgs,
     'POST /msg' : sendMsg
 };
