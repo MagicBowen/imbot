@@ -22,7 +22,10 @@ model.saveMsg = async (msg) => {
 }
 
 model.getMsgsBy = async (fromUserId, toUserId, startTimeStamp, endTimeStamp) => {
-    const condition = {'fromUserId' : fromUserId, 'toUserId' : toUserId, 'msg.timestamp' : {$gte : startTimeStamp,  $lt: endTimeStamp}}
+    // const condition = {'fromUserId' : fromUserId, 'toUserId' : toUserId, 'msg.timestamp' : {$gte : startTimeStamp,  $lt: endTimeStamp}}
+    // const condition = {'fromUserId' : fromUserId, 'toUserId' : toUserId}
+    const condition = {'fromUserId' : fromUserId, 'toUserId' : toUserId, 'msg.timestamp' : {$gte: startTimeStamp, $lt: endTimeStamp}}
+    console.log(condition)
     return await Msg.find(condition).exec();
 };
 

@@ -1,5 +1,6 @@
 const redis = require('../models/redis-client')
 const TemplateMsg = require('../utils/template-msg')
+const SeedRepo = require('../models/seed-repo')
 const config = require('../config')
 const logger = require('../utils/listener-logger').logger('msg-listener')
 
@@ -33,7 +34,7 @@ class MsgListener {
         let timer = setTimeout(async function() {
             try {
                 if(await redis.cmd.llen(that.getMsgQueueName(msg.fromUserId, msg.toUserId)) > 0) {
-                    const seed = await seeds.getSeed(msg.toUserId)
+                    const seed = await SeedRepo.getSeed(msg.toUserId)
                     if (!seed) {
                         logger.warn('send template msg with no seed for id ' + msg.toUserId)
                     }

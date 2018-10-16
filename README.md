@@ -124,7 +124,7 @@ host : https://xiaodamp.cn/api/imbot
 {
     fromUserId  : "Bowen", 
     toUserId    : "Joe",
-    templateUrl : ' https://xiaodamp.com/imbot/template_msg', // 触发模板消息时的回调地址，参见'POST /template_msg'接口
+    templateUrl : 'https://xiaodamp.com/imbot/template_msg', // 触发模板消息时的回调地址，参见'POST /template_msg'接口
     msg : {
         type  : "text",      // text | image
         reply : "hello",     // reply | url

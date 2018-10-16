@@ -67,13 +67,13 @@ async function sendMsg(ctx) {
 async function getMsgs(ctx) {
     const fromUserId = ctx.query.fromUserId
     const toUserId = ctx.query.toUserId
-    const startTimeStamp = ctx.query.startTimeStamp
-    const endTimeStamp = ctx.query.endTimeStamp
+    const startTimeStamp = parseInt(ctx.query.startTimeStamp)
+    const endTimeStamp = parseInt(ctx.query.endTimeStamp)
     try {
         const msgs = await PersistentMsgs.getMsgsBy(fromUserId, toUserId, startTimeStamp, endTimeStamp)
         ctx.response.type = "application/json"
         ctx.response.status = 200
-        ctx.response.body = {result : msgs}
+        ctx.response.body = {msgs : msgs}
     } catch (err) {
         ctx.response.type = "application/json"
         ctx.response.status = 404;

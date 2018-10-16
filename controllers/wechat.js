@@ -3,7 +3,8 @@ const crypto = require('crypto');
 const postJson = require('../utils/post-json')
 const config = require('../config');
 const accessTocken = require('../utils/access-tocken');
-const seeds = require('../models/seed-repo')
+const SeedRepo = require('../models/seed-repo')
+const UserRepo = require('../models/user-repo')
 const logger = require('../utils/logger').logger('wechat');
 
 async function getOpenId(ctx) {
@@ -83,7 +84,7 @@ async function handleCustomerMsg(ctx) {
 async function saveFormIdForTemplateMsg(ctx) {
     const openId = ctx.request.body.openId
     const formId = ctx.request.body.formId
-    seeds.addSeed(openId, formId)
+    SeedRepo.addSeed(openId, formId)
     ctx.response.type = "application/json"
     ctx.response.status = 200
     ctx.response.body = {result : 'success'}
@@ -91,7 +92,7 @@ async function saveFormIdForTemplateMsg(ctx) {
 
 async function clearFromIdForUser(ctx) {
     const openId = ctx.query.openId
-    await seeds.clear(openId)
+    await SeedRepo.clear(openId)
     ctx.response.type = "application/json"
     ctx.response.status = 200
     ctx.response.body = {result : 'success'}
@@ -104,9 +105,9 @@ async function sendTemplateMsg(ctx) {
     const toUserId = ctx.request.body.toUserId
     const formId = ctx.request.body.formId
     const msg = ctx.request.body.msg
-    const user = await users.getUserBy(fromUserId)
+    const user = await UserRepo.getUserBy(fromUserId)
     const nickName = (user && user.wechat && user.wechat.nickName) ? user.wechat.nickName : '匿名'
-    logger.debug(`send template msg from ${fromUserId} to ${toUserId} by formId ${seed} of msg ${JSON.stringify(msg)}`)   
+    logger.debug(`send template msg from ${fromUserId} to ${toUserId} by formId ${formId} of msg ${JSON.stringify(msg)}`)   
     try {
         const result = await postJson(url, {
             template_id: 'OE3Qo9tA7Z3qy3HWJTjkBKQ87jkaWVGDckzWeYN0Dvg',
