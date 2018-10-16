@@ -49,11 +49,8 @@ async function getPendingCountList(ctx) {
 }
 
 async function sendMsg(ctx) {
-    const fromUserId = ctx.request.body.fromUserId
-    const toUserId = ctx.request.body.toUserId
-    const msg = ctx.request.body.msg
     try {
-        await msgRepo.addPendingMsg(fromUserId, toUserId, msg)
+        await msgRepo.addPendingMsg(ctx.request.body)
         ctx.response.type = "application/json";
         ctx.response.status = 200;
         ctx.response.body = {result : 'success'};        

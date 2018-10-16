@@ -58,8 +58,18 @@ host : https://xiaodamp.cn/api/imbot
 
 测试接口，发送模板消息
 
-- parameters
-    - { openId : 'xxxxx' }
+```js
+{
+    formId:'',                // 用于发送模板消息的formId
+    fromUserId: '',           // 发送者openId
+    toUserId: '',             // 接收者openId
+    msg:{                     // 触发模板消息的消息
+        type: '',             // text || image
+        reply: '',            // text消息的内容 || image的URL
+        timestamp: ''         // 时间戳（ms）
+    }
+}
+```
 
 ### 'POST /form_id'
 
@@ -112,12 +122,13 @@ host : https://xiaodamp.cn/api/imbot
 
 ```js
 {
-    fromUserId : "Bowen", 
-    toUserId : "Joe", 
+    fromUserId  : "Bowen", 
+    toUserId    : "Joe",
+    templateUrl : ' https://xiaodamp.com/imbot/template_msg', // 触发模板消息时的回调地址，参见'POST /template_msg'接口
     msg : {
-        type : "text",      // text | image
+        type  : "text",      // text | image
         reply : "hello",     // reply | url
-        timestamp : 1537606347 // UTC timestamp, unit : second
+        timestamp : 1537606347 // UTC timestamp, unit : ms
     }
 }
 ```

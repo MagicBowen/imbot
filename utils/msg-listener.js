@@ -24,29 +24,33 @@ class MsgListener {
         let msg = JSON.parse(result[1])
         logger.info(`handle msg arrived : ${JSON.stringify(msg)}`)
         if (!this.timers[msg.toUserId]){
-            this.setTimerForNewMsg(msg.fromUserId, msg.toUserId, msg.data)
+            this.setTimerForNewMsg(msg)
         }
     }
 
-    setTimerForNewMsg(fromUserId, toUserId, msg) {
+    setTimerForNewMsg(msg) {
         let that = this
         let timer = setTimeout(async function() {
             try {
-                if(await redis.cmd.llen(that.getMsgQueueName(fromUserId, toUserId)) > 0) {
-                    const result = await TemplateMsg.send(fromUserId, toUserId, msg)
+                if(await redis.cmd.llen(that.getMsgQueueName(msg.fromUserId, msg.toUserId)) > 0) {
+                    const seed = await seeds.getSeed(msg.toUserId)
+                    if (!seed) {
+                        logger.warn('send template msg with no seed for id ' + msg.toUserId)
+                    }
+                    const result = await TemplateMsg.send(msg, seed)
                     logger.info('send template msg when timeout, result is ' + JSON.stringify(result))
                 } else {
-                    logger.info(`template msg (from ${fromUserId} to ${toUserId}) canceled because of no pendding msg in queue`)
+                    logger.info(`template msg (from ${msg.fromUserId} to ${msg.toUserId}) canceled because of no pendding msg in queue`)
                 }
             } catch (err) {
                 logger.error(`send template msg error, because of ${JSON.stringify(err)}`)
             } finally {
-                that.timers[toUserId] = null
+                that.timers[msg.toUserId] = null
             }
         }, config.msg_notify_wait_second * 1000)
 
-        this.timers[toUserId] = timer
-        logger.info(`set timer for new msg of user ${toUserId}`)
+        this.timers[msg.toUserId] = timer
+        logger.info(`set timer for new msg of user ${msg.toUserId}`)
     }
 
     async clearTimerForMsg(toUserId) {

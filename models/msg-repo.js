@@ -10,9 +10,9 @@ class MsgRepo {
         this.timers = {}
     }
 
-    async addPendingMsg(fromUserId, toUserId, msg) {
-        this.client.rpush(this.getMsgQueueName(fromUserId, toUserId), JSON.stringify(msg))
-        await this.onNewMsgArrived(fromUserId, toUserId, msg)
+    async addPendingMsg(msg) {
+        this.client.rpush(this.getMsgQueueName(msg.fromUserId, msg.toUserId), JSON.stringify(msg.msg))
+        await this.onNewMsgArrived(msg)
     }
 
     async getMsgsBy(fromUserId, toUserId) {
@@ -52,9 +52,9 @@ class MsgRepo {
         return result.sort((a, b) => {return a.timestamp < b.timestamp})
     }
 
-    async onNewMsgArrived(fromUserId, toUserId, msg) {
-        logger.info(`new msg arrived : ${fromUserId} to ${toUserId} of ${JSON.stringify(msg)}`)
-        this.client.rpush(MSG_LISTENER_QUEUE_NAME, JSON.stringify({fromUserId : fromUserId, toUserId : toUserId, data : msg}))
+    async onNewMsgArrived(msg) {
+        logger.info(`new msg arrived : ${msg.fromUserId} to ${msg.toUserId} of ${JSON.stringify(msg.msg)}`)
+        this.client.rpush(MSG_LISTENER_QUEUE_NAME, JSON.stringify(msg))
     }
 
     // async onNewMsgArrived(fromUserId, toUserId, msg) {

@@ -98,40 +98,34 @@ async function clearFromIdForUser(ctx) {
 }
 
 async function sendTemplateMsg(ctx) {
-    const tocken = await accessTocken.getTocken();
-    const url = 'https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token=' + tocken;
-    const openId = ctx.request.body.openId
-    const seed = seeds.getSeed(openId)
-    if (!seed) {
-        ctx.response.status = 404;
-        ctx.response.body = {result : 'no seed for sending template msg'}
-        logger.error('send template msg error because of no seed for id ' + openId)
-        return
-    }
+    const tocken = await accessTocken.getTocken()
+    const url = 'https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token=' + tocken
+    const fromUserId = ctx.request.body.fromUserId
+    const toUserId = ctx.request.body.toUserId
+    const formId = ctx.request.body.formId
+    const msg = ctx.request.body.msg
+    const user = await users.getUserBy(fromUserId)
+    const nickName = (user && user.wechat && user.wechat.nickName) ? user.wechat.nickName : '匿名'
+    logger.debug(`send template msg from ${fromUserId} to ${toUserId} by formId ${seed} of msg ${JSON.stringify(msg)}`)   
     try {
-        const result = await postJson(url,
-                {
-                    template_id: 'OE3Qo9tA7Z3qy3HWJTjkBKQ87jkaWVGDckzWeYN0Dvg',
-                    page: "index",
-                    form_id: seed,
-                    data: {
-                        keyword1: {
-                            value: "Bowen"
-                        },
-                        keyword2: {
-                            value: "null"
-                        },
-                        keyword3: {
-                            value: "在吗？"
-                        },
-                        keyword4: {
-                            value: "2018年10月10日"
-                        }
-                    },
-                    emphasis_keyword: "keyword1.DATA",
-                    touser: openId
+        const result = await postJson(url, {
+            template_id: 'OE3Qo9tA7Z3qy3HWJTjkBKQ87jkaWVGDckzWeYN0Dvg',
+            page: "pages/index/index",
+            form_id: formId,
+            data: {
+                keyword1: {
+                    value: nickName
+                },
+                keyword3: {
+                    value: (msg.type === 'text') ? msg.reply : '图片或多媒体类型'
+                },
+                keyword4: {
+                    value: (new Date(msg.timestamp)).toLocaleString()
                 }
-        );
+            },
+            emphasis_keyword: "keyword1.DATA",
+            touser: toUserId
+        });
     
         ctx.response.type = "application/json"
         ctx.response.status = 200
