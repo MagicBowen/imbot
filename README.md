@@ -133,6 +133,19 @@ host : https://xiaodamp.cn/api/imbot
 }
 ```
 
+### 'GET /msg'
+
+查询历史消息
+
+- parameters
+    - fromUserId
+    - toUserId
+    - startTimeStamp : 消息的开始时间，包含
+    - endTimeStamp ： 消息的结束时间，不包含
+
+- result
+    - {msgs : []}
+
 ### 'POST /image'
 
 上传图片
