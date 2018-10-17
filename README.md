@@ -176,6 +176,18 @@ host : https://xiaodamp.cn/api/imbot
 - result
     - {url : 'video/xxxxxx.jpg'}
 
+### 'POST /asr'
+
+从音频获得ASR结果
+
+上传音频
+
+- parameters
+    - upload : files.audio
+
+- result
+    - {url : 'audio/xxxxxx.mp3', result : }
+
 ## environment
 
 - install redis
