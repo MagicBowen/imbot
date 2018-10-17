@@ -166,15 +166,15 @@ host : https://xiaodamp.cn/api/imbot
 - result
     - {url : 'audio/xxxxxx.jpg'}
 
-### 'POST /vedio'
+### 'POST /video'
 
 上传视频
 
 - parameters
-    - upload : files.vedio
+    - upload : files.video
 
 - result
-    - {url : 'vedio/xxxxxx.jpg'}
+    - {url : 'video/xxxxxx.jpg'}
 
 ## environment
 

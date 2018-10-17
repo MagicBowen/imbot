@@ -57,22 +57,22 @@ async function postAudio(ctx) {
     }
 }
 
-async function postVedio(ctx) {
+async function postVideo(ctx) {
     try {
-        const filename = await saveFile(ctx.request.body.files.vedio, 'static/vedio');
+        const filename = await saveFile(ctx.request.body.files.video, 'static/video');
         ctx.response.type = "application/json";
         ctx.response.status = 200;
-        ctx.response.body = {url : '/vedio/' + filename};
+        ctx.response.body = {url : '/video/' + filename};
     } catch (err) {
         ctx.response.status = 404;
         ctx.response.type = "application/json";
         ctx.response.body = {error: err.toString()};
-        logger.error('post vedio failed: ' + err);
+        logger.error('post video failed: ' + err);
     }
 }
 
 module.exports = {
     'POST /image' : postImage,
     'POST /audio' : postAudio,
-    'POST /vedio' : postVedio
+    'POST /video' : postVideo
 }
