@@ -17,6 +17,8 @@
         "axios": "^0.18.0",
         "crypto": "^1.0.1",
         "fs": "0.0.1-security",
+        "baidu-aip-sdk": "^2.3.3",
+        "fluent-ffmpeg": "^2.1.2",
         "koa": "^2.5.1",
         "koa-body": "^2.6.0",
         "koa-router": "^7.4.0",
