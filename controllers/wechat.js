@@ -128,7 +128,7 @@ async function sendTemplateMsg(ctx) {
             touser: toUserId
         });
 
-        logger.debug(`send template msg result : ${JSON,stringify(result)}`)
+        logger.debug(`send template msg result : ${JSON.stringify(result)}`)
     
         ctx.response.type = "application/json"
         ctx.response.status = 200
