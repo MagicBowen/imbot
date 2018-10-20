@@ -127,6 +127,8 @@ async function sendTemplateMsg(ctx) {
             emphasis_keyword: "keyword1.DATA",
             touser: toUserId
         });
+
+        logger.debug(`send template msg result : ${JSON,stringify(result)}`)
     
         ctx.response.type = "application/json"
         ctx.response.status = 200
