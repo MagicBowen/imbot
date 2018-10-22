@@ -107,7 +107,8 @@ async function sendTemplateMsg(ctx) {
     const msg = ctx.request.body.msg
     const user = await UserRepo.getUserBy(fromUserId)
     const nickName = (user && user.wechat && user.wechat.nickName) ? user.wechat.nickName : '匿名'
-    logger.debug(`send template msg from ${fromUserId} to ${toUserId} by formId ${formId} of msg ${JSON.stringify(msg)}`)   
+    const timestr = (new Date(msg.timestamp)).toLocaleString()
+    logger.debug(`send template msg from ${fromUserId} to ${toUserId} by formId ${formId} of msg ${JSON.stringify(msg)} on time ${timestr}`)   
     try {
         const result = await postJson(url, {
             template_id: 'OE3Qo9tA7Z3qy3HWJTjkBKQ87jkaWVGDckzWeYN0Dvg',
@@ -117,11 +118,14 @@ async function sendTemplateMsg(ctx) {
                 keyword1: {
                     value: nickName
                 },
+                keyword2: {
+                    value: '空'
+                },
                 keyword3: {
                     value: (msg.type === 'text') ? msg.reply : '图片或多媒体类型'
                 },
                 keyword4: {
-                    value: (new Date(msg.timestamp)).toLocaleString()
+                    value: timestr
                 }
             },
             emphasis_keyword: "keyword1.DATA",
