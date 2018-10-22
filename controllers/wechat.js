@@ -108,7 +108,7 @@ async function sendTemplateMsg(ctx) {
     const user = await UserRepo.getUserBy(fromUserId)
     const nickName = (user && user.wechat && user.wechat.nickName) ? user.wechat.nickName : '匿名'
     const timestr = (new Date(msg.timestamp)).toLocaleString()
-    logger.debug(`send template msg from ${fromUserId} to ${toUserId} by formId ${formId} of msg ${JSON.stringify(msg)} on time ${timestr}`)   
+    logger.debug(`send template msg from ${fromUserId} to ${toUserId} by formId ${formId} of msg ${JSON.stringify(msg)} on time ${msg.timestamp}`)   
     try {
         const result = await postJson(url, {
             template_id: 'OE3Qo9tA7Z3qy3HWJTjkBKQ87jkaWVGDckzWeYN0Dvg',
