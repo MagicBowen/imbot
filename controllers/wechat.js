@@ -112,7 +112,7 @@ async function sendTemplateMsg(ctx) {
     try {
         const result = await postJson(url, {
             template_id: 'OE3Qo9tA7Z3qy3HWJTjkBKQ87jkaWVGDckzWeYN0Dvg',
-            page: "plugin://myPlugin/chatDialog", //"pages/index/index",
+            page: "pages/index/index", // "plugin://myPlugin/chatDialog", 
             form_id: formId,
             data: {
                 keyword1: {
